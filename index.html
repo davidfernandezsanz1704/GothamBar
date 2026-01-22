@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gotham - Carta Digital</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-color: #ffffff;
+            --accent-color: #00ffb7; /* El verde neón de los iconos */
+            --accent-secondary: #00f2ab;
+            --price-color: #00ffb7;
+            --header-height: 60px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding-bottom: 50px;
+        }
+
+        /* --- Header --- */
+        header {
+            background-color: var(--bg-color);
+            padding: 10px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid #333;
+            height: var(--header-height);
+        }
+
+        .logo-img {
+            max-height: 40px;
+        }
+
+        .back-btn {
+            position: absolute;
+            left: 20px;
+            background: none;
+            border: none;
+            color: var(--accent-color);
+            font-size: 24px;
+            cursor: pointer;
+            display: none; /* Se muestra solo en subpáginas */
+        }
+
+        /* --- Main Menu Grid --- */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* 2 columnas en móvil */
+            gap: 15px;
+        }
+
+        @media (min-width: 600px) {
+            .menu-grid {
+                grid-template-columns: repeat(3, 1fr); /* 3 columnas en tablet/pc */
+            }
+        }
+
+        .category-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid transparent;
+            text-decoration: none;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-color);
+            box-shadow: 0 5px 15px rgba(0, 255, 183, 0.1);
+        }
+
+        .category-icon {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 10px;
+            object-fit: contain;
+        }
+
+        .category-title {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        /* --- Product List Views --- */
+        .section-view {
+            display: none; /* Oculto por defecto */
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--accent-color);
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sub-category-title {
+            color: #888;
+            margin: 20px 0 10px 0;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #333;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        .product-item {
+            background-color: var(--card-bg);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .product-info {
+            flex: 1;
+            padding-right: 10px;
+        }
+
+        .product-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 4px;
+            color: #fff;
+        }
+
+        .product-desc {
+            font-size: 0.85rem;
+            color: #aaa;
+            line-height: 1.4;
+        }
+
+        .product-price {
+            color: var(--price-color);
+            font-weight: bold;
+            font-size: 1.1rem;
+            white-space: nowrap;
+        }
+
+        /* --- Buttons & Modals --- */
+        .btn-allergens {
+            display: block;
+            margin: 20px auto;
+            background: transparent;
+            border: 1px solid #555;
+            color: #aaa;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        .footer img {
+            height: 30px;
+            margin-top: 10px;
+            opacity: 0.7;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <button class="back-btn" id="backBtn" onclick="goHome()">&#10094;</button>
+        <img src="https://uploads.etersystem.es/uploads/2276861651c8b0c50a496.59529800.png" alt="Gotham Logo" class="logo-img">
+    </header>
+
+    <div class="container">
+        
+        <div id="mainMenu">
+            <button class="btn-allergens" onclick="alert('Consulta con el personal sobre alérgenos.')">Mostrar alérgenos</button>
+
+            <div class="menu-grid">
+                <div class="category-card" onclick="showSection('shishas')">
+                    <img src="https://afpapp.es/image/shisha/00ffb7" alt="Shishas" class="category-icon">
+                    <div class="category-title">Shishas</div>
+                </div>
+
+                <div class="category-card" onclick="showSection('cocktails')">
+                    <img src="https://afpapp.es/image/coctel/00ffb7" alt="Cocktails" class="category-icon">
+                    <div class="category-title">Cocktails</div>
+                </div>
+
+                <div class="category-card" onclick="showSection('batidos')">
+                    <img src="https://afpapp.es/image/icrecream/00f2ab" alt="Batidos" class="category-icon">
+                    <div class="category-title">Batidos</div>
+                </div>
+
+                <div class="category-card" onclick="showSection('smoothies')">
+                    <img src="https://afpapp.es/image/smoothie/00fcaa" alt="Smoothies" class="category-icon">
+                    <div class="category-title">Smoothies</div>
+                </div>
+
+                <div class="category-card" onclick="showSection('refrescos')">
+                    <img src="https://afpapp.es/image/soft_drink/00ffb7" alt="Refrescos" class="category-icon">
+                    <div class="category-title">Refrescos</div>
+                </div>
+
+                <div class="category-card" onclick="showSection('cervezas')">
+                    <img src="https://afpapp.es/image/beer/00ffb7" alt="Cervezas" class="category-icon">
+                    <div class="category-title">Cervezas</div>
+                </div>
+
+                <div class="category-card" onclick="showSection('licores')">
+                    <img src="https://afpapp.es/image/cup/00ffb7" alt="Licores" class="category-icon">
+                    <div class="category-title">Licores y Vino</div>
+                </div>
+
+                <div class="category-card" onclick="showSection('combinados')">
+                    <img src="https://afpapp.es/image/bottle/00ffb7" alt="Botellas" class="category-icon">
+                    <div class="category-title">Combinado / Botellas</div>
+                </div>
+
+                <div class="category-card" onclick="showSection('comida')">
+                    <img src="https://afpapp.es/image/crepe/22ffaa" alt="Comida" class="category-icon">
+                    <div class="category-title">Comida</div>
+                </div>
+
+                 <div class="category-card" onclick="showSection('dulce')">
+                    <img src="https://afpapp.es/image/dessert/00ff9f" alt="Dulce" class="category-icon">
+                    <div class="category-title">Dulce</div>
+                </div>
+
+                 <div class="category-card" onclick="showSection('ofertas')">
+                    <img src="https://afpapp.es/image/menukids/00ffa6" alt="Ofertas" class="category-icon">
+                    <div class="category-title">Ofertas Gotham</div>
+                </div>
+            </div>
+
+            <div class="footer">
+                <p>Powered by AFP</p>
+                <img src="https://afpapp.es/img/logos/lsb.png" alt="Logo Footer">
+            </div>
+        </div>
+
+        <div id="shishas" class="section-view">
+            <h2 class="section-header">Shishas</h2>
+            
+            <h3 class="sub-category-title">Street Smoke</h3>
+            <div class="product-item">
+                <div class="product-info">
+                    <div class="product-name">Beach with a p.</div>
+                    <div class="product-desc">Yogurt de melocotón.</div>
+                </div>
+                <div class="product-price">12.00 €</div>
+            </div>
+            <div class="product-item">
+                <div class="product-info">
+                    <div class="product-name">Desert dream</div>
+                    <div class="product-desc">Galleta de lotus caramelizada.</div>
+                </div>
+                <div class="product-price">12.00 €</div>
+            </div>
+             <div class="product-item">
+                <div class="product-info">
+                    <div class="product-name">The Boss</div>
+                    <div class="product-desc">Helado de maxibon.</div>
+                </div>
+                <div class="product-price">12.00 €</div>
+            </div>
+
+            <h3 class="sub-category-title">Privilege</h3>
+            <div class="product-item">
+                <div class="product-info">
+                    <div class="product-name">Dive</div>
+                    <div class="product-desc">Melón frío.</div>
+                </div>
+                <div class="product-price">12.00 €</div>
+            </div>
+            <div class="product-item">
+                <div class="product-info">
+                    <div class="product-name">Fight</div>
+                    <div class="product-desc">Menta dulce.</div>
+                </div>
+                <div class="product-price">12.00 €</div>
+            </div>
+
+            <h3 class="sub-category-title">Holster</h3>
+            <div class="product-item">
+                <div class="product-info">
+                    <div class="product-name">Iz Kaktuz</div>
+                    <div class="product-desc">Cactus Helado.</div>
+                </div>
+                <div class="product-price">12.00 €</div>
+            </div>
+            <div class="product-item">
+                <div class="product-info">
+                    <div class="product-name">Bono</div>
+                    <div class="product-desc">Kinder bueno.</div>
+                </div>
+                <div class="product-price">12.00 €</div>
+            </div>
+            <div class="product-item">
+                <div class="product-info">
+                    <div class="product-name">Bloody Punch</div>
+                    <div class="product-desc">Pomelo con naranja.</div>
+                </div>
+                <div class="product-price">12.00 €</div>
+            </div>
+            <div class="product-item">
+                <div class="product-info">
+                    <div class="product-name">Miss Jossy</div>
+                    <div class="product-desc">Frambuesa ácida y fresa dulce.</div>
+                </div>
+                <div class="product-price">12.00 €</div>
+            </div>
+
+             <h3 class="sub-category-title">Tabaco Negro Premium</h3>
+             <div class="product-item">
+                <div class="product-info">
+                    <div class="product-name">Pinkman (Musth)</div>
+                    <div class="product-desc">Pomelo rosa y fresa con sirope de frambuesa.</div>
+                </div>
+                <div class="product-price">15.00 €</div>
+            </div>
+            <div class="product-item">
+                <div class="product-info">
+                    <div class="product-name">Milric</div>
+                    <div class="product-desc">Arroz con leche.</div>
+                </div>
+                <div class="product-price">15.00 €</div>
+            </div>
+        </div>
+
+        <div id="cocktails" class="section-view">
+            <h2 class="section-header">Cocktails</h2>
+            
+            <div class="product-item">
+                <div class="product-info">
+                    <div class="product-name">Mojito Gotham</div>
+                    <div class="product-desc">Ron Miel, Lima, hierbabuena, Sprite.</div>
+                </div>
+                <div class="product-price">8.00 €</div>
+            </div>
+            <div class="product-item">
+                <div class="product-info">
+                    <div class="product-name">Sex on the Gotham</div>
+                    <div class="product-desc">Licor Amaretto, puré de maracuyá, zumo de naranja, sirope de arándanos.</div>
+                </div>
+                <div class="product-price">8.50 €</div>
+            </div>
+            <div class="product-item">
+                <div class="product-info">
+                    <div class="product-name">The Joker (NUEVO)</div>
+                    <div class="product-desc">Ginebra, Sirope curacao, maracuyá, jugo de lima.</div>
+                </div>
+                <div class="product-price">9.00 €</div>
+            </div>
+            <div class="product-item">
+                <div class="product-info">
+                    <div class="product-name">Varadero</div>
+                    <div class="product-desc">Tequila crema de mango, sirope de mandarina, zumo de piña, fanta de limón.</div>
+                </div>
+                <div class="product-price">8.50 €</div>
+            </div>
+            <div class="product-item">
+                <div class="product-info">
+                    <div class="product-name">Piña colada</div>
+                    <div class="product-desc">Ron blanco, crema de limón, puré de coco, puré de piña, zumo de piña.</div>
+                </div>
+                <div class="product-price">8.50 €</div>
+            </div>
+            <div class="product-item">
+                <div class="product-info">
+                    <div class="product-name">Mojito</div>
+                    <div class="product-desc">Ron blanco, lima, hierbabuena, sprite.</div>
+                </div>
+                <div class="product-price">7.50 €</div>
+            </div>
+            <div class="product-item">
+                <div class="product-info">
+                    <div class="product-name">Gotham House</div>
+                    <div class="product-desc">Vodka, puré de coco, zumo de limón, sirope de curacao.</div>
+                </div>
+                <div class="product-price">8.00 €</div>
+            </div>
+            <div class="product-item">
+                <div class="product-info">
+                    <div class="product-name">Long Island Tea</div>
+                    <div class="product-desc">Vodka, ron blanco, ginebra, triple seco, lima, coca cola.</div>
+                </div>
+                <div class="product-price">8.50 €</div>
+            </div>
+        </div>
+
+        <div id="batidos" class="section-view">
+            <h2 class="section-header">Batidos</h2>
+            <p style="text-align:center; color:#888;">Pregunta por nuestros sabores de temporada.</p>
+            <br>
+            <div class="product-item">
+                <div class="product-info">
+                    <div class="product-name">Batido de Chocolate</div>
+                    <div class="product-desc">Con nata y sirope.</div>
+                </div>
+                <div class="product-price">-- €</div>
+            </div>
+            <div class="product-item">
+                <div class="product-info">
+                    <div class="product-name">Batido de Fresa</div>
+                    <div class="product-desc">Natural y refrescante.</div>
+                </div>
+                <div class="product-price">-- €</div>
+            </div>
+        </div>
+        
+        <div id="ofertas" class="section-view">
+            <h2 class="section-header">Ofertas Gotham</h2>
+            <div style="text-align: center; margin-bottom: 20px;">
+                <img src="https://i.postimg.cc/hPQPPgJb/Gofre-smoothie.png" alt="Oferta" style="max-width: 100%; border-radius: 10px;">
+            </div>
+            <div class="product-item">
+                <div class="product-info">
+                    <div class="product-name">Pack Merienda</div>
+                    <div class="product-desc">Batido o Smoothie + Gofre, Crepes o Coulant.</div>
+                </div>
+                <div class="product-price">10.00 €</div>
+            </div>
+            <div class="product-item">
+                <div class="product-info">
+                    <div class="product-name">Complemento Cachimba</div>
+                    <div class="product-desc">Añade cachimba a tu oferta por solo 10€ más.</div>
+                </div>
+                <div class="product-price">+10.00 €</div>
+            </div>
+        </div>
+
+        </div>
+
+    <script>
+        // Función para mostrar una sección y ocultar el menú
+        function showSection(sectionId) {
+            // Ocultar menú principal
+            document.getElementById('mainMenu').style.display = 'none';
+            
+            // Ocultar todas las secciones primero
+            const sections = document.querySelectorAll('.section-view');
+            sections.forEach(s => s.style.display = 'none');
+
+            // Mostrar la sección deseada (si existe, si no, muestra un alert temporal)
+            const target = document.getElementById(sectionId);
+            if(target) {
+                target.style.display = 'block';
+                // Mostrar botón de volver
+                document.getElementById('backBtn').style.display = 'block';
+                window.scrollTo(0,0);
+            } else {
+                alert("Esta sección está en construcción o vacía en el ejemplo.");
+                // Volver al menú si falla
+                goHome();
+            }
+        }
+
+        // Función para volver al menú
+        function goHome() {
+            // Ocultar todas las secciones
+            const sections = document.querySelectorAll('.section-view');
+            sections.forEach(s => s.style.display = 'none');
+
+            // Mostrar menú principal
+            document.getElementById('mainMenu').style.display = 'block';
+            
+            // Ocultar botón de volver
+            document.getElementById('backBtn').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
